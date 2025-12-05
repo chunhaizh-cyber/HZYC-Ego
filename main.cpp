@@ -23,6 +23,7 @@ PointCloudProcessor point_cloud_processor;
 
 int frame_id = 0;
 bool system_running = true;
+std::shared_ptr<ExistenceFeature> locked_target = nullptr;
 
 // 模拟数字生命状态
 struct DigitalLife {
@@ -157,7 +158,6 @@ void run() {
     std::cout << "数字生命 v2.0 启动：目标锁定 + 持续跟踪 + 特征记忆\n";
     std::cout << "控制命令: [l] 锁定最近目标  [q] 退出系统  [其他键] 继续运行\n\n";
     
-    std::shared_ptr<ExistenceFeature> locked_target = nullptr;
     double lock_start_time = 0;
     
     while (system_running) {
@@ -189,8 +189,9 @@ void run() {
             Vector3D center = cluster.center;
             
             // 特征记忆与跟踪
-            auto memory = global_memory.getOrCreate(temp_id++, center, contours[temp_id-1], current_time);
+            auto memory = global_memory.getOrCreate(temp_id, center, contours[temp_id], current_time);
             currentExistences.push_back(memory);
+            temp_id++;
         }
         
         // 更新数字生命状态

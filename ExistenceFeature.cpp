@@ -5,11 +5,13 @@
 
 ExistenceFeature::ExistenceFeature(int id) 
     : id(id), last_seen_time(0), confidence(1.0) {
-    // 随机生成颜色
+    // 随机生成颜色（简化版本，不使用OpenCV）
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(100, 255);
-    color = cv::viz::Color(dis(gen), dis(gen), dis(gen));
+    std::uniform_int_distribution<> dis(100, 255);
+    color.r = dis(gen);
+    color.g = dis(gen);
+    color.b = dis(gen);
 }
 
 void ExistenceFeature::update(const Vector3D& pos, const std::vector<int64_t>& contour, double time) {
