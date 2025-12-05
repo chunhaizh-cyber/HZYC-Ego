@@ -104,13 +104,15 @@ std::vector<int64_t> generateSimulatedContour() {
 }
 
 // 主运行函数
-// 控制台可视化函数
+// 控制台可视化函数（v3.0版本）
 void displayConsoleVisualization() {
-    std::cout << "\n=== 数字生命 v2.0 视觉系统 ===\n";
+    std::cout << "\n=== 数字生命 v3.0 视觉系统 ===\n";
     std::cout << "时间: " << frame_id << "帧 | ";
     std::cout << "存在目标: " << currentExistences.size() << " | ";
     std::cout << "安全度: " << std::fixed << std::setprecision(2) << life.safety << " | ";
     std::cout << "好奇度: " << life.curiosity << "\n";
+    std::cout << "世界坐标系: 原点(" << world_coords.origin.x << "," 
+              << world_coords.origin.y << "," << world_coords.origin.z << ")\n";
     
     if (currentExistences.empty()) {
         std::cout << "【环境感知】未发现目标，系统处于扫描模式...\n";
@@ -118,51 +120,65 @@ void displayConsoleVisualization() {
     }
     
     std::cout << "\n【目标识别】发现 " << currentExistences.size() << " 个目标:\n";
-    std::cout << "┌────┬──────┬────────┬────────┬────────┬────────┬────────┐\n";
-    std::cout << "│ ID │ 类型 │ 距离(m)│ 置信度 │ 轨迹点 │  位置  │  状态  │\n";
-    std::cout << "├────┼──────┼────────┼────────┼────────┼────────┼────────┤\n";
+    std::cout << "┌────┬──────┬────────┬────────┬────────┬──────────────┬────────┐\n";
+    std::cout << "│ ID │ 类型 │ 距离(m)│ 出现次数│ 置信度 │ 世界坐标     │  状态  │\n";
+    std::cout << "├────┼──────┼────────┼────────┼────────┼──────────────┼────────┤\n";
     
     for (const auto& existence : currentExistences) {
-        if (existence->trajectory.empty()) continue;
+        if (!existence->is_active) continue; // 跳过已终止的跟踪
         
-        Vector3D pos = existence->trajectory.back();
-        double distance = pos.distance(Vector3D(0, 0, 0));
+        Vector3D world_pos = existence->world_position;
+        double distance = world_pos.distance(Vector3D(0, 0, 0));
         std::string type = (existence->trajectory.size() > 100) ? "人形" : "物体";
-        std::string status = (existence == locked_target) ? "【锁定】" : "监测中";
+        std::string status = (existence == locked_target) ? "【锁定】" : 
+                           (existence->is_active ? "监测中" : "[已消失]");
         
         std::cout << "│ " << std::setw(2) << existence->id << " │ "
                   << std::setw(4) << type << " │ "
                   << std::setw(6) << std::fixed << std::setprecision(2) << distance << " │ "
+                  << std::setw(6) << existence->appearance_count << " │ "
                   << std::setw(6) << std::fixed << std::setprecision(2) << existence->confidence << " │ "
-                  << std::setw(6) << existence->trajectory.size() << " │ "
-                  << "(" << std::setw(4) << std::fixed << std::setprecision(1) << pos.x << ","
-                  << std::setw(4) << pos.y << "," << std::setw(4) << pos.z << ") │ "
+                  << "(" << std::setw(4) << std::fixed << std::setprecision(1) << world_pos.x << ","
+                  << std::setw(4) << world_pos.y << "," << std::setw(4) << world_pos.z << ") │ "
                   << status << " │\n";
     }
     
-    std::cout << "└────┴──────┴────────┴────────┴────────┴────────┴────────┘\n";
+    std::cout << "└────┴──────┴────────┴────────┴────────┴──────────────┴────────┘\n";
     
-    // 显示锁定目标详细信息
-    if (locked_target) {
+    // 显示锁定目标详细信息（v3.0版本）
+    if (locked_target && locked_target->is_active) {
         double age = frame_id * 0.1; // 简化的观察时间
         std::cout << "\n【目标锁定】持续观察 ID:" << locked_target->id << "\n";
+        std::cout << "   世界坐标: (" << locked_target->world_position.x << ","
+                  << locked_target->world_position.y << "," 
+                  << locked_target->world_position.z << ")\n";
+        std::cout << "   出现次数: " << locked_target->appearance_count << " 次\n";
         std::cout << "   观察时长: " << std::fixed << std::setprecision(1) << age << "秒\n";
         std::cout << "   轨迹记录: " << locked_target->trajectory.size() << " 个数据点\n";
-        std::cout << "   平均速度: " << locked_target->avg_velocity.magnitude() << " m/s\n";
+        std::cout << "   平均速度: " << locked_target->velocity.magnitude() << " m/s\n";
         std::cout << "   记忆强度: " << (locked_target->confidence > 0.8 ? "高" : 
                                         locked_target->confidence > 0.5 ? "中" : "低") << "\n";
     }
 }
 
 void run() {
-    std::cout << "数字生命 v2.0 启动：目标锁定 + 持续跟踪 + 特征记忆\n";
+    std::cout << "数字生命 v3.0 启动：绝对世界坐标 + 智能跟踪终止 + 出现次数统计\n";
     std::cout << "控制命令: [l] 锁定最近目标  [q] 退出系统  [其他键] 继续运行\n\n";
     
     double lock_start_time = 0;
+    bool world_origin_set = false;
+    Vector3D first_camera_pos;
     
     while (system_running) {
         double current_time = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.0;
+        
+        // 设置世界原点（第一帧相机位置）
+        if (!world_origin_set) {
+            first_camera_pos = Vector3D(0, 0, 0); // 相机初始位置
+            world_coords.setOrigin(first_camera_pos, current_time);
+            world_origin_set = true;
+        }
         
         // 生成模拟点云数据
         std::vector<Vector3D> cloud = generateSimulatedPointCloud();
@@ -185,11 +201,11 @@ void run() {
         for (const auto& cluster : clusters) {
             if (temp_id >= contours.size()) break;
             
-            // 计算聚类中心
-            Vector3D center = cluster.center;
+            // 计算聚类中心（自我坐标）
+            Vector3D ego_center = cluster.center;
             
-            // 特征记忆与跟踪
-            auto memory = global_memory.getOrCreate(temp_id, center, contours[temp_id], current_time);
+            // 特征记忆与跟踪（使用绝对坐标系统）
+            auto memory = global_memory.getOrCreate(temp_id, ego_center, contours[temp_id], current_time);
             currentExistences.push_back(memory);
             temp_id++;
         }
@@ -198,10 +214,10 @@ void run() {
         life.existences = currentExistences;
         life.updateSafetyAndCuriosity();
         
-        // 控制台可视化
+        // 控制台可视化（v3.0版本，显示绝对坐标和出现次数）
         displayConsoleVisualization();
         
-        // 显示状态信息
+        // 显示状态信息（v3.0版本）
         std::cout << "\n【系统状态】帧:" << ++frame_id 
                   << " | 存在:" << life.existences.size() 
                   << " | 安全度:" << std::fixed << std::setprecision(2) << life.safety 
@@ -220,17 +236,20 @@ void run() {
                 system_running = false;
                 break;
             } else if ((key == 'l' || key == 'L') && !currentExistences.empty()) {
-                // 锁定最近的目标
+                // 锁定最近的目标（基于世界坐标）
                 auto nearest = *std::min_element(currentExistences.begin(), currentExistences.end(),
                     [](const auto& a, const auto& b) {
-                        if (a->trajectory.empty() || b->trajectory.empty()) return false;
-                        return a->trajectory.back().distance(Vector3D(0, 0, 0)) < 
-                               b->trajectory.back().distance(Vector3D(0, 0, 0));
+                        if (!a->is_active || !b->is_active) return false;
+                        return a->world_position.distance(Vector3D(0, 0, 0)) < 
+                               b->world_position.distance(Vector3D(0, 0, 0));
                     });
                 locked_target = nearest;
                 lock_start_time = current_time;
                 std::cout << "\n>>> 目标锁定！ID:" << locked_target->id 
-                          << " 距离:" << locked_target->trajectory.back().distance(Vector3D(0, 0, 0)) << "m\n";
+                          << " 世界坐标:(" << locked_target->world_position.x << ","
+                          << locked_target->world_position.y << "," 
+                          << locked_target->world_position.z << ")"
+                          << " 出现次数:" << locked_target->appearance_count << "\n";
             }
         }
         
@@ -250,6 +269,8 @@ void run() {
     std::cout << "- 总帧数: " << frame_id << "\n";
     std::cout << "- 识别目标: " << global_memory.database.size() << " 个不同存在\n";
     std::cout << "- 系统状态: 安全度 " << life.safety << " | 好奇度 " << life.curiosity << "\n";
+    std::cout << "- 世界坐标系: 原点 (" << world_coords.origin.x << "," 
+              << world_coords.origin.y << "," << world_coords.origin.z << ")\n";
 }
 
 int main() {

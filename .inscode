@@ -1,4 +1,4 @@
-run = 'cd build && echo "q" | ./bin/DigitalLifeVisionSystem'
+run = "./digital_life_v3"
 is_gui = false
 is_resident = false
 is_html = false
