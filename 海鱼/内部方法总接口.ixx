@@ -196,16 +196,16 @@ export namespace 内部方法 {
     export class 内部方法中心 {
     public:
         // 注入实现
-        void 设定事务管理(std::shared_ptr<事务管理接口> x) { 事务管理 = std::move(x); }
-        void 设定节点工厂(std::shared_ptr<节点工厂接口> x) { 节点工厂 = std::move(x); }
-        void 设定链操作(std::shared_ptr<链操作接口> x) { 链操作 = std::move(x); }
-        void 设定索引(std::shared_ptr<索引接口> x) { 索引 = std::move(x); }
-        void 设定特征操作(std::shared_ptr<特征操作接口> x) { 特征操作 = std::move(x); }
-        void 设定存在场景(std::shared_ptr<存在场景操作接口> x) { 存在场景 = std::move(x); }
-        void 设定状态动态(std::shared_ptr<状态动态接口> x) { 状态动态 = std::move(x); }
-        void 设定关系因果(std::shared_ptr<关系因果接口> x) { 关系因果 = std::move(x); }
-        void 设定校验规范化(std::shared_ptr<校验规范化接口> x) { 校验规范化 = std::move(x); }
-        void 设定序列化(std::shared_ptr<序列化接口> x) { 序列化 = std::move(x); }
+        void 设定事务管理(std::shared_ptr<事务管理接口> x) { 事务管理 = (x); }
+        void 设定节点工厂(std::shared_ptr<节点工厂接口> x) { 节点工厂 = (x); }
+        void 设定链操作(std::shared_ptr<链操作接口> x) { 链操作 = (x); }
+        void 设定索引(std::shared_ptr<索引接口> x) { 索引 = (x); }
+        void 设定特征操作(std::shared_ptr<特征操作接口> x) { 特征操作 = (x); }
+        void 设定存在场景(std::shared_ptr<存在场景操作接口> x) { 存在场景 = (x); }
+        void 设定状态动态(std::shared_ptr<状态动态接口> x) { 状态动态 = (x); }
+        void 设定关系因果(std::shared_ptr<关系因果接口> x) { 关系因果 = (x); }
+        void 设定校验规范化(std::shared_ptr<校验规范化接口> x) { 校验规范化 = (x); }
+        void 设定序列化(std::shared_ptr<序列化接口> x) { 序列化 = (x); }
 
         // 便捷访问
         std::shared_ptr<事务管理接口>       获取事务管理()   const { return 事务管理; }

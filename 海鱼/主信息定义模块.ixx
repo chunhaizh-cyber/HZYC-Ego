@@ -276,271 +276,213 @@ public:
 
 export class 特征值基类 {
 public:
-    枚举_特征值类型 类型 = 枚举_特征值类型::未定义;//矢量,标量,字符串
+    枚举_特征值类型       类型 = 枚举_特征值类型::未定义;
+    枚举_特征值比较模式   比较模式 = 枚举_特征值比较模式::有序标量;
+
     virtual ~特征值基类() = default;
-    特征值基类(枚举_特征值类型 类) :类型(类) {}
-    特征值基类() {}
-    virtual  std::int64_t  比较(特征值基类* 对象, 枚举_比较字段 字段, 枚举_比较条件 条件) const = 0;
+
+    特征值基类() = default;
+    explicit 特征值基类(枚举_特征值类型 类型_, 枚举_特征值比较模式 模式_ = 枚举_特征值比较模式::有序标量)
+        : 类型(类型_), 比较模式(模式_) {
+    }
+
+    // 统一比较接口（之前已经有）
+    virtual std::int64_t 比较(特征值基类* 对象,
+        枚举_比较字段 字段,
+        枚举_比较条件 条件) const = 0;
+
+    // ★ 新增：尝试把特征值转换为 double 标量，用于“有序标量”的场景（特征概念树里的区间概念）
+    // 返回 true 表示 out 中填入了一个有效数值；false = 这个值不是有序标量。
+    virtual bool 转为标量(double& out) const {
+        // 默认实现：不是有序标量
+        (void)out;
+        return false;
+    }
 };
 
-// 内部工具函数（不导出）
+
+// 内部小工具（不导出）
 namespace
 {
-    inline std::int64_t 比较_数值(std::int64_t 左, std::int64_t 右, 枚举_比较条件 条件)
+    inline std::int64_t 比较_整数(std::int64_t 左, std::int64_t 右, 枚举_比较条件 条件)
     {
-        switch (条件)
-        {        
-        case 枚举_比较条件::相等:
-            return 左 == 右;
-        case 枚举_比较条件::不等于:
-            return 左 != 右;
-        case 枚举_比较条件::大于:
-            return 左 > 右;
-        case 枚举_比较条件::小于:
-            return 左 < 右;
-        case 枚举_比较条件::大于等于:
-            return 左 >= 右;
-        case 枚举_比较条件::小于等于:
-            return 左 <= 右;
-        default:
-            return -1;
-        }
-    }
-    inline std::int64_t 比较_字符串(const std::string& 左, const std::string& 右, 枚举_比较条件 条件)
-    {
-        int cmp = 左.compare(右);
-
-        switch (条件)
-        {       
-        case 枚举_比较条件::相等:
-            return cmp == 0;
-        case 枚举_比较条件::不等于:
-            return cmp != 0;
-        case 枚举_比较条件::大于:
-            return cmp > 0;
-        case 枚举_比较条件::小于:
-            return cmp < 0;
-        case 枚举_比较条件::大于等于:
-            return cmp >= 0;
-        case 枚举_比较条件::小于等于:
-            return cmp <= 0;
-        default:
-            return -1;
-        }
-    }
-    inline std::int64_t 比较_指针(const void* 左, const void* 右, 枚举_比较条件 条件)
-    {
-        switch (条件)
-        {       
+        switch (条件) {
         case 枚举_比较条件::相等:
             return 左 == 右 ? 1 : 0;
-
         case 枚举_比较条件::不等于:
             return 左 != 右 ? 1 : 0;
-
+        case 枚举_比较条件::大于:
+            return 左 > 右 ? 1 : 0;
+        case 枚举_比较条件::小于:
+            return 左 < 右 ? 1 : 0;
+        case 枚举_比较条件::大于等于:
+            return 左 >= 右 ? 1 : 0;
+        case 枚举_比较条件::小于等于:
+            return 左 <= 右 ? 1 : 0;
         default:
-            // 其它条件（大于、小于……）不支持
             return -1;
         }
     }
-    inline std::int64_t 计算模长(const std::vector<std::int64_t>& v)
+
+    // 指针比较（主要用于“单位”等指向词性节点的字段）
+    template<typename T>
+    inline std::int64_t 比较_指针(T* 左, T* 右, 枚举_比较条件 条件)
     {
-        std::int64_t sum = 0.0;
-        for (std::int64_t x : v)
-        {
-            sum += x * x;
+        switch (条件) {
+        case 枚举_比较条件::相等:
+            return 左 == 右 ? 1 : 0;
+        case 枚举_比较条件::不等于:
+            return 左 != 右 ? 1 : 0;
+        default:
+            return -1;
         }
-        return std::sqrt(sum);
-    }
-    inline std::size_t 像素索引(std::int32_t x, std::int32_t y, std::int32_t 宽)
-    {
-        return static_cast<std::size_t>(y) * static_cast<std::size_t>(宽)
-            + static_cast<std::size_t>(x);
-    }
-    inline void 计算块与位(std::size_t idx, std::size_t& 块索引, int& 位索引)
-    {
-        块索引 = idx >> 6;                     // idx / 64
-        位索引 = static_cast<int>(idx & 63);   // idx % 64
-    }
-    inline int 统计位数(std::uint64_t x)
-    {
-#if defined(__cpp_lib_bitops)
-        return static_cast<int>(std::popcount(x));
-#else
-        int c = 0;
-        while (x)
-        {
-            x &= (x - 1);
-            ++c;
-        }
-        return c;
-#endif
     }
 
-    inline bool 点阵_完全相同(const 点阵图& A, const 点阵图& B)
+    inline bool 向量完全相等(const std::vector<std::int64_t>& a,
+        const std::vector<std::int64_t>& b)
     {
-        if (A.宽 != B.宽 || A.高 != B.高)
-        {
-            return false;
-        }
-        if (A.数据.size() != B.数据.size())
-        {
-            return false;
-        }
-        for (std::size_t i = 0; i < A.数据.size(); ++i)
-        {
-            if (A.数据[i] != B.数据[i])
-            {
-                return false;
-            }
+        if (a.size() != b.size()) return false;
+        for (std::size_t i = 0; i < a.size(); ++i) {
+            if (a[i] != b[i]) return false;
         }
         return true;
     }
-
 } // unnamed namespace
 
 export class 标量特征值主信息类 : public 特征值基类 {
 public:
     词性节点类* 单位 = nullptr;
-    std::int64_t  值 = 0;  
-    标量特征值主信息类() { 
-        特征值基类::类型 = 枚举_特征值类型::标量;
+    std::int64_t 值 = 0;
+
+    标量特征值主信息类()
+        : 特征值基类(枚举_特征值类型::标量, 枚举_特征值比较模式::有序标量)
+    {
     }
-    标量特征值主信息类(词性节点类* 单位_, std::int64_t  值_):单位(单位_), 值(值_){
-        特征值基类::类型 = 枚举_特征值类型::标量;
-    }    
-    std::int64_t 比较(特征值基类* 对象, 枚举_比较字段 字段, 枚举_比较条件 条件) const override {
 
+    标量特征值主信息类(std::int64_t v)
+        : 特征值基类(枚举_特征值类型::标量, 枚举_特征值比较模式::有序标量),
+        值(v)
+    {
+    }
 
-        标量特征值主信息类* 主信息 = dynamic_cast<标量特征值主信息类*>(对象);
+    标量特征值主信息类(词性节点类* 单位_, std::int64_t v)
+        : 特征值基类(枚举_特征值类型::标量, 枚举_特征值比较模式::有序标量),
+        单位(单位_), 值(v)
+    {
+    }
+
+    std::int64_t 比较(特征值基类* 对象,枚举_比较字段 字段,枚举_比较条件 条件) const override
+    {
+        auto* 主信息 = dynamic_cast<标量特征值主信息类*>(对象);
         if (!主信息) {
-            throw std::invalid_argument("标量特征值主信息类:比较函数,比较对象类型错误");
-            switch (字段) {
-            case 枚举_比较字段::基础信息_矢量特征值_类型:
-                return 比较_数值(
-                    static_cast<double>(static_cast<std::int32_t>(this->类型)),
-                    static_cast<double>(static_cast<std::int32_t>(主信息->类型)),
-                    条件);            
-            case 枚举_比较字段::基础信息_矢量特征值_单位:            
-                return 比较_指针(this->单位, 主信息->单位, 条件);
-
-            case 枚举_比较字段::基础信息_矢量特征值_值:
-            {                
-                return this->值 - 主信息->值;               
-            }
-
-
-            return -1;
-            }
-
+            throw std::invalid_argument("标量特征值主信息类::比较 - 对象类型错误");
         }
+            return 比较_整数(this->值, 主信息->值, 条件);        
+    }
+
+    bool 转为标量(double& out) const override {
+        out = static_cast<double>(值);
+        return true;
     }
 };
+
+// ----------------------------------------------------------------------
+// 矢量特征值：多个 int64，只做相等 / 相似度
+// 说明：
+//   - 这里的“矢量”在你的规则里，就是“不能比较大小”的那类特征值
+//   - 比如：轮廓描述、坐标向量、embedding、编码向量等
+//----------------------------------------------------------------------
+
 export class 矢量特征值主信息类 : public 特征值基类 {
-public:    
+public:
     std::vector<std::int64_t> 值;
 
-    矢量特征值主信息类() {
-        特征值基类::类型 = 枚举_特征值类型::矢量;
-    }
-    矢量特征值主信息类(std::vector<std::int64_t> 值_):值(值_) {
-        特征值基类::类型 = 枚举_特征值类型::矢量;
-    }
-    矢量特征值主信息类(枚举_特征值类型 t, std::vector<std::int64_t> v) :  值(std::move(v)) {
-        if (t != 枚举_特征值类型::矢量)
-            throw std::invalid_argument("矢量特征值主信息类:新建节点值类型错误");
-        特征值基类::类型 = 枚举_特征值类型::矢量;
-    }
-    矢量特征值主信息类(枚举_特征值类型 t, std::int64_t v) : 特征值基类(t) {
-        if(t!=枚举_特征值类型::矢量)
-            throw std::invalid_argument("矢量特征值主信息类:新建节点值类型错误");
-        特征值基类::类型 = 枚举_特征值类型::矢量;
-        值.push_back(v);
+    矢量特征值主信息类()
+        : 特征值基类(枚举_特征值类型::矢量, 枚举_特征值比较模式::相等或相似度)
+    {
     }
 
-    std::int64_t 比较(特征值基类* 对象, 枚举_比较字段 字段, 枚举_比较条件 条件) const override {
+    explicit 矢量特征值主信息类(std::vector<std::int64_t> v)
+        : 特征值基类(枚举_特征值类型::矢量, 枚举_特征值比较模式::相等或相似度),
+        值(v)
+    {
+    }
 
+    std::size_t 维度() const noexcept { return 值.size(); }
 
-        矢量特征值主信息类* 主信息 = dynamic_cast<矢量特征值主信息类*>(对象);
-        if (!主信息) {
-            throw std::invalid_argument("矢量特征值主信息类:比较函数,比较对象类型错误");
-            switch (字段) {
-            case 枚举_比较字段::基础信息_非矢量特征值_类型:
+    std::int64_t 比较(特征值基类* 对象,
+        枚举_比较字段 /*字段*/,
+        枚举_比较条件 条件) const override
+    {
+        auto* 右 = dynamic_cast<矢量特征值主信息类*>(对象);
+        if (!右) {
+            throw std::invalid_argument("矢量特征值主信息类::比较 - 对象类型错误");
+        }
 
-                if (条件 == 枚举_比较条件::相等) {
-                    return this->类型 == 主信息->类型;
-                }
-                else if (条件 == 枚举_比较条件::不等于) {
-                    return this->类型 != 主信息->类型;
-                }
-                break;
-
-            case 枚举_比较字段::基础信息_非矢量特征值_值:
-            {
-                // 默认按“模长”比较，是否更细（分量比较）交给上层用别的方法实现
-                std::int64_t 本 = 计算模长(this->值);
-                std::int64_t 彼 = 计算模长(主信息->值);
-                return 比较_数值(本, 彼, 条件);
-            }
-            
-
-
+        // 当前实现遵守你的原则：
+        //   - 不能比较大小 => 不支持 > / < ，只支持 == / !=
+        switch (条件) {
+        case 枚举_比较条件::相等:
+            return 向量完全相等(this->值, 右->值) ? 1 : 0;
+        case 枚举_比较条件::不等于:
+            return 向量完全相等(this->值, 右->值) ? 0 : 1;
+        default:
+            // 其它条件不支持（> < >= <=），留给“相似度方法/二次特征”去做
             return -1;
-            }
         }
     }
+
+    // 将来如果要做“相似度”，可以额外写一个非虚函数：
+    //
+    // double 计算相似度(const 矢量特征值主信息类& 另一) const;
+    //
+    // 由不同的“矢量语义类型”（轮廓/坐标/颜色/embedding）选不同相似度算法，
+    // 放在“特征抽象策略”那里实现，这里先保持简单。
 };
 
-// 先在 枚举_特征值类型 里加一个枚举项：字符串
-// enum class 枚举_特征值类型 { 未定义, 矢量, 非矢量, 轮廓值, 字符串 };
 
-//========================= 字符串特征值 =========================
+//----------------------------------------------------------------------
+// 字符特征值：字符串编码（代表某个存在 / 概念 / 特征）
+// 规则：
+//   - 存储层只知道字符串本身
+//   - 比较层默认只实现 == / !=
+//   - 真正的“聚类 / 概念生长”通过“解码 -> 再按被指向对象聚类”来做
+//----------------------------------------------------------------------
 
 export class 字符特征值主信息类 : public 特征值基类 {
 public:
+    // 这里用 std::string，表示已转换为 UTF-8 的编码；
+    // 如果你希望保持 UTF-16/UTF-32，可以改成 std::wstring / std::u32string。
     std::string 值;
 
-    字符特征值主信息类() {
-        类型 = 枚举_特征值类型::字符串;
+    字符特征值主信息类()
+        : 特征值基类(枚举_特征值类型::字符串, 枚举_特征值比较模式::相等或相似度)
+    {
     }
 
-    explicit 字符特征值主信息类(const std::string& v)
-        : 特征值基类(枚举_特征值类型::字符串),
-        值(v) {
+    explicit 字符特征值主信息类(std::string v)
+        : 特征值基类(枚举_特征值类型::字符串, 枚举_特征值比较模式::相等或相似度),
+        值(v)
+    {
     }
 
     std::int64_t 比较(特征值基类* 对象,
-        枚举_比较字段 字段,
+        枚举_比较字段 /*字段*/,
         枚举_比较条件 条件) const override
     {
         auto* 右 = dynamic_cast<字符特征值主信息类*>(对象);
         if (!右) {
-            throw std::invalid_argument("字符特征值主信息类: 比较对象类型错误");
+            throw std::invalid_argument("字符特征值主信息类::比较 - 对象类型错误");
         }
 
-        // 这里只给一个简单实现：
-        // 一般字符串只用 相等 / 不等；大小比较用字典序（有需要你再细化）
-        switch (字段) {
-            // 如果你有单独的枚举字段，就用它；没有就走默认分支
-            // case 枚举_比较字段::基础信息_字符串特征值_值:
+        switch (条件) {
+        case 枚举_比较条件::相等:
+            return 值 == 右->值 ? 1 : 0;
+        case 枚举_比较条件::不等于:
+            return 值 != 右->值 ? 1 : 0;
         default:
-            switch (条件) {
-            case 枚举_比较条件::相等:
-                return 值 == 右->值 ? 1 : 0;
-            case 枚举_比较条件::不等于:
-                return 值 != 右->值 ? 1 : 0;
-            case 枚举_比较条件::大于:
-                return 值 > 右->值 ? 1 : 0;
-            case 枚举_比较条件::大于等于:
-                return 值 >= 右->值 ? 1 : 0;
-            case 枚举_比较条件::小于:
-                return 值 < 右->值 ? 1 : 0;
-            case 枚举_比较条件::小于等于:
-                return 值 <= 右->值 ? 1 : 0;
-            default:
-                // 返回一个“差值”也可以，但字符串不好定义差的语义
-                return 0;
-            }
+            // 字符串默认也不做大小比较；如果你想支持字典序比较，可以在这里扩展
+            return -1;
         }
     }
 };
@@ -685,7 +627,7 @@ public:
     场景节点类* 内部世界 = nullptr;
     时间戳       创建时间 = 0;
     std::string 取存在ID(const 存在节点类* 节点) const {
-        return 节点 ? 节点->主键 : 0;
+        return 节点->主键 ;
     }
     // 当前“代表性特征”的快捷索引：指向挂在该存在节点下面的特征节点
     std::vector<特征节点类*> 特征当前状态;
@@ -774,7 +716,7 @@ public:
         std::vector<动态节点类*> d = {},
         std::vector<二次特征节点类*> r = {})
         : 基础信息基类(名, 型),
-        状态列表(std::move(s)), 动态列表(std::move(d)), 关系列表(std::move(r)) {
+        状态列表(s), 动态列表(d), 关系列表(r) {
     }
 
     std::int64_t 比较(基础信息基类* 对象, 枚举_比较字段 字段, 枚举_比较条件 条件) const override {
@@ -825,7 +767,7 @@ public:
 //—— 状态
 export class 状态节点主信息类 : public 基础信息基类 {
 public:
-    时间戳 收到信息时间戳=结构体_时间戳::当前().值;
+    时间戳 收到信息时间戳=结构体_时间戳::当前();
     时间戳 信息发生时间戳=0;
     基础信息节点类* 对应信息节点 = nullptr; // 通常指向“特征节点”
 
@@ -1018,7 +960,7 @@ public:
         std::vector<基础信息节点类*> 动态链 = {})
         : 基础信息基类(名, 型),
         因果场景(场景), 因信息(因), 果信息(果), 动作信息(动作),
-        过程(std::move(过程链)), 实例信息_动态节点(std::move(动态链)) {
+        过程(过程链), 实例信息_动态节点(动态链) {
     }
 
     std::int64_t 比较(基础信息基类* 对象, 枚举_比较字段 字段, 枚举_比较条件 条件) const override {
@@ -1263,8 +1205,8 @@ public:
     文章主信息类() = default;
 
     explicit 文章主信息类(std::string 标题_,std::string 原文_ = "")
-        : 标题(std::move(标题_)),
-        原始文本(std::move(原文_))
+        : 标题(标题_),
+        原始文本(原文_)
     {
     }
 };
@@ -1284,7 +1226,7 @@ public:
     段落主信息类(std::size_t 序号,
         std::string 文本 = "")
         : 在文章中的序号(序号),
-        原始文本(std::move(文本))
+        原始文本(文本)
     {
     }
 };
@@ -1320,8 +1262,8 @@ public:
         std::vector<词性节点类*>  词序列_,
         std::string              文本_ = "")
         : 在段落中的序号(序号),
-        词序列(std::move(词序列_)),
-        原始文本(std::move(文本_))
+        词序列(词序列_),
+        原始文本(文本_)
     {
     }
 };
@@ -1415,7 +1357,7 @@ public:
     方法结果主信息类(场景节点类* 场,
         std::vector<存在节点类*> e = {},
         std::vector<特征节点类*> f = {})
-        : 结果场景(场), 受影响存在(std::move(e)), 受影响特征(std::move(f)) {
+        : 结果场景(场), 受影响存在(e), 受影响特征(f) {
     }
 
     std::strong_ordering 比较到(const 方法结果主信息类& rhs, 枚举_比较字段 /*f*/) const override {

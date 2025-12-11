@@ -68,9 +68,6 @@
     <ClCompile Include="内部方法总接口.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="全局变量模块.ixx">
-      <Filter>头文件</Filter>
-    </ClCompile>
     <ClCompile Include="任务类.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
@@ -197,7 +194,7 @@
     <ClCompile Include="二次特征类.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="宇宙树类.ixx">
+    <ClCompile Include="宇宙链类.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
     <ClCompile Include="宇宙环境类.ixx">
@@ -229,6 +226,30 @@
     </ClCompile>
     <ClCompile Include="概念引擎类.impl.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="外设类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="三维场景管理类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D455相机类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="相机接口类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="点簇分割类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="外设类.impl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="存在提取类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="场景实时显示类.ixx">
+      <Filter>头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

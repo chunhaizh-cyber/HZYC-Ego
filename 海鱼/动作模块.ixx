@@ -1,4 +1,4 @@
-﻿#include <string>
+﻿
  
 export module 动作模块;
 
@@ -9,7 +9,8 @@ import <atlbase.h>; // 用于CString
 import <iostream>;
 import <vector>;
 import <stdexcept>;
-
+import <string>;
+import <cstdint>;
 // import 全局模块;
 import 方法模块;
 import 主信息定义模块;
@@ -87,7 +88,7 @@ private:
         bool 是否提交;
     };
    // 结构体_自然语言理解输出 方法_自然语言理解_复杂(const std::string& 文本, 场景节点类* 当前场景, /* 可选：历史上下文句柄 */);
-    结构体_自然语言理解输出 方法_自然语言理解_复杂(const std::string& 文本,场景节点类* 当前场景);
+  //  结构体_自然语言理解输出 方法_自然语言理解_复杂(const std::string& 文本,场景节点类* 当前场景);
 
     // 典型简单方法
     bool 方法_分词(const std::string& 文本, std::vector<语素节点类*>& 输出语素);
@@ -116,12 +117,57 @@ private:
 
 
 
-
-
-
-
-
-
   
 };
 
+
+
+bool 基础动作类::方法_分词(const std::string& 文本, std::vector<语素节点类*>& 输出语素)
+{
+    return false;
+}
+
+bool 基础动作类::方法_词性标注(const std::vector<语素节点类*>& 语素, std::vector<词性节点类*>& 输出词性)
+{
+    return false;
+}
+
+bool 基础动作类::方法_短语句法(const std::vector<词性节点类*>& 词性, 短语节点类*& 输出短语根)
+{
+    return false;
+}
+
+bool 基础动作类::方法_语素落地映射(短语节点类* 短语根, 场景节点类* 临时场景)
+{
+    return false;
+}
+
+bool 基础动作类::方法_指代消解(场景节点类* 临时场景)
+{
+    return false;
+}
+
+bool 基础动作类::方法_时间体貌解析(场景节点类* 临时场景)
+{
+    return false;
+}
+
+bool 基础动作类::方法_生成二次特征(场景节点类* 临时场景)
+{
+    return false;
+}
+
+bool 基础动作类::方法_场景对齐与合并(场景节点类* 临时场景, 场景节点类* 当前场景)
+{
+    return false;
+}
+
+bool 基础动作类::方法_冲突与置信度融合(场景节点类* 临时场景, double& 全局置信度)
+{
+    return false;
+}
+
+bool 基础动作类::方法_提交策略(场景节点类* 临时场景, double 全局置信度, bool& 是否提交)
+{
+    return false;
+}

@@ -257,14 +257,14 @@ export namespace 外部方法 {
         // 统一的回包：打包“头节点场景/结果节点场景”和节点本体指针，便于任务系统传递
       
         // 注入各子系统实现
-        void 设置信息获取(std::shared_ptr<信息获取接口> s) { 信息获取 = std::move(s); }
-        void 设定语言处理(std::shared_ptr<语言处理接口> s) { 语言处理 = std::move(s); }
-        void 设定感知(std::shared_ptr<感知接口> s) { 感知 = std::move(s); }
-        void 设定推理模型(std::shared_ptr<推理模型接口> s) { 推理模型 = std::move(s); }
-        void 设定数据存储(std::shared_ptr<数据存储接口> s) { 数据存储 = std::move(s); }
-        void 设定控制行动(std::shared_ptr<控制行动接口> s) { 控制行动 = std::move(s); }
-        void 设定人机交互(std::shared_ptr<人机交互接口> s) { 人机交互 = std::move(s); }
-        void 设定社交消息(std::shared_ptr<社交消息接口> s) { 社交消息 = std::move(s); }
+        void 设置信息获取(std::shared_ptr<信息获取接口> s) { 信息获取 = (s); }
+        void 设定语言处理(std::shared_ptr<语言处理接口> s) { 语言处理 = (s); }
+        void 设定感知(std::shared_ptr<感知接口> s) { 感知 = (s); }
+        void 设定推理模型(std::shared_ptr<推理模型接口> s) { 推理模型 = (s); }
+        void 设定数据存储(std::shared_ptr<数据存储接口> s) { 数据存储 = (s); }
+        void 设定控制行动(std::shared_ptr<控制行动接口> s) { 控制行动 = (s); }
+        void 设定人机交互(std::shared_ptr<人机交互接口> s) { 人机交互 = (s); }
+        void 设定社交消息(std::shared_ptr<社交消息接口> s) { 社交消息 = (s); }
 
         // 便捷转发（可按需精简）
         std::shared_ptr<信息获取接口>   获取信息获取()   const { return 信息获取; }
@@ -277,7 +277,7 @@ export namespace 外部方法 {
         std::shared_ptr<社交消息接口>   获取社交消息()   const { return 社交消息; }
 
         // === public: 新增 ===
-        void 设定方法节点工厂(std::shared_ptr<方法节点工厂> f) { 节点工厂 = std::move(f); }
+        void 设定方法节点工厂(std::shared_ptr<方法节点工厂> f) { 节点工厂 = (f); }
         std::shared_ptr<方法节点工厂> 获取方法节点工厂() const { return 节点工厂; }
 
         // 便捷封装：任意外部方法在运行前后调用这两个助手即可形成“方法节点”
@@ -290,7 +290,7 @@ export namespace 外部方法 {
             const std::vector<特征节点类*>& f,
             方法回包 已有 = {}) {
             if (!节点工厂) return { false, {}, "未设置 方法节点工厂" };
-            return 节点工厂->创建结果节点(结果场景, e, f, std::move(已有));
+            return 节点工厂->创建结果节点(结果场景, e, f, (已有));
         }
 
         // === private: 新增 ===

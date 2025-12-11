@@ -1,5 +1,5 @@
 ﻿
-//module;
+module;
 #include "pch.h"
 #include "framework.h"
 #include "海鱼.h"

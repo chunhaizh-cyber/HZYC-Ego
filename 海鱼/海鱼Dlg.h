@@ -6,7 +6,7 @@
 #include "窗口_交互界面.h"
 
 import 自我线程模块;
-
+import 外设模块;
 
 class C海鱼DlgAutoProxy;
 
@@ -57,6 +57,8 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+
+	void 启动外设();
 };
 
 

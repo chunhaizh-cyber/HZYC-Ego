@@ -85,68 +85,74 @@ private:
     static const std::vector<表达结构>& 获取知识库();
 
     // 17 个原子用途对应的融合函数
-    static bool 融合_空间位置(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_时间定位(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_比较排序(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_数量范围(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_否定排除(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_疑问需求(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_条件假设(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_因果解释(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_时间体貌(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_评价立场(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_来源引述(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_定义分类(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_角色标注(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_约束义务(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_例外对照(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_单位度量(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-    static bool 融合_指代省略(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
-
-    // 一些简单的辅助函数（需要你根据自己的 词性节点类 做适配）
-    static std::string 取词文本(const 词性节点类* 节点);
-    static bool 文本等于(const 词性节点类* 节点, const std::string& 文本);
-
-    static bool 是时间词(const 词性节点类* 节点);
-    static bool 是否定词(const 词性节点类* 节点);
-    static bool 是疑问标记(const 词性节点类* 节点);
-    static bool 是条件连词(const 词性节点类* 节点);
-    static bool 是因果连词_原因(const 词性节点类* 节点);
-    static bool 是因果连词_结果(const 词性节点类* 节点);
-    static bool 是比较标记(const 词性节点类* 节点);
-    static bool 是模态词(const 词性节点类* 节点);
-    static bool 是例外标记(const 词性节点类* 节点);
-    static bool 是单位词(const 词性节点类* 节点);
-    static bool 是代词_指代(const 词性节点类* 节点);
-
-    static bool 是数字串(const std::string& s);
+//    static bool 融合_空间位置(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_时间定位(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_比较排序(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_数量范围(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_否定排除(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_疑问需求(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_条件假设(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_因果解释(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_时间体貌(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_评价立场(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_来源引述(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_定义分类(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_角色标注(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_约束义务(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_例外对照(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_单位度量(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//    static bool 融合_指代省略(const std::vector<词性节点类*>&, 世界树类&, 场景节点类*);
+//
+//    // 一些简单的辅助函数（需要你根据自己的 词性节点类 做适配）
+//    static std::string 取词文本(const 词性节点类* 节点);
+//    static bool 文本等于(const 词性节点类* 节点, const std::string& 文本);
+//
+//    static bool 是时间词(const 词性节点类* 节点);
+//    static bool 是否定词(const 词性节点类* 节点);
+//    static bool 是疑问标记(const 词性节点类* 节点);
+//    static bool 是条件连词(const 词性节点类* 节点);
+//    static bool 是因果连词_原因(const 词性节点类* 节点);
+//    static bool 是因果连词_结果(const 词性节点类* 节点);
+//    static bool 是比较标记(const 词性节点类* 节点);
+//    static bool 是模态词(const 词性节点类* 节点);
+//    static bool 是例外标记(const 词性节点类* 节点);
+//    static bool 是单位词(const 词性节点类* 节点);
+//    static bool 是代词_指代(const 词性节点类* 节点);
+//
+//    static bool 是数字串(const std::string& s);
     static double 解析数字(const std::string& s);
 };
 
 // ====== 知识库初始化 ======
 
 
+bool 自然语言知识库类::融合自然句(自然句节点类* 自然句节点, 世界树类& 世界树, 场景节点类* 默认场景)
+{
+    return false;
+}
+
 const std::vector<自然语言知识库类::表达结构>&
 自然语言知识库类::获取知识库()
 {
-    static const std::vector<表达结构> 知识库 = {
-        { "空间位置",   "{N} 在 {地点}",      &自然语言知识库类::融合_空间位置 },
-        { "时间定位",   "{事件} 在 {时间}",   &自然语言知识库类::融合_时间定位 },
-        { "比较排序",   "{N1} 比 {N2} 更 {形容词}", &自然语言知识库类::融合_比较排序 },
-        { "数量范围",   "{N} 有 {数量}",      &自然语言知识库类::融合_数量范围 },
-        { "否定排除",   "不 / 没有 / 不是",   &自然语言知识库类::融合_否定排除 },
-        { "疑问需求",   "吗 / 什么 / 谁 / 哪儿", &自然语言知识库类::融合_疑问需求 },
-        { "条件假设",   "如果 … 就 …",       &自然语言知识库类::融合_条件假设 },
-        { "因果解释",   "因为 … 所以 …",     &自然语言知识库类::融合_因果解释 },
-        { "时间体貌",   "正在 / 已经 / 还没", &自然语言知识库类::融合_时间体貌 },
-        { "评价立场",   "好 / 坏 / 喜欢 / 讨厌", &自然语言知识库类::融合_评价立场 },
-        { "来源引述",   "A 说 B / 据 A 说 B",   &自然语言知识库类::融合_来源引述 },
-        { "定义分类",   "A 是 B / A 属于 B",   &自然语言知识库类::融合_定义分类 },
-        { "角色标注",   "A 给 B C / A 从 B 拿 C", &自然语言知识库类::融合_角色标注 },
-        { "约束义务",   "必须 / 应该 / 可以", &自然语言知识库类::融合_约束义务 },
-        { "例外对照",   "除了 A 以外 B",     &自然语言知识库类::融合_例外对照 },
-        { "单位度量",   "3 米 / 5 公斤",     &自然语言知识库类::融合_单位度量 },
-        { "指代省略",   "他 / 她 / 它 / 那里 / 这样", &自然语言知识库类::融合_指代省略 },
-    };
+    static const std::vector<表达结构> 知识库;// = {
+//        { "空间位置",   "{N} 在 {地点}",      &自然语言知识库类::融合_空间位置 },
+//        { "时间定位",   "{事件} 在 {时间}",   &自然语言知识库类::融合_时间定位 },
+//        { "比较排序",   "{N1} 比 {N2} 更 {形容词}", &自然语言知识库类::融合_比较排序 },
+//        { "数量范围",   "{N} 有 {数量}",      &自然语言知识库类::融合_数量范围 },
+//        { "否定排除",   "不 / 没有 / 不是",   &自然语言知识库类::融合_否定排除 },
+//        { "疑问需求",   "吗 / 什么 / 谁 / 哪儿", &自然语言知识库类::融合_疑问需求 },
+//        { "条件假设",   "如果 … 就 …",       &自然语言知识库类::融合_条件假设 },
+//        { "因果解释",   "因为 … 所以 …",     &自然语言知识库类::融合_因果解释 },
+//        { "时间体貌",   "正在 / 已经 / 还没", &自然语言知识库类::融合_时间体貌 },
+//        { "评价立场",   "好 / 坏 / 喜欢 / 讨厌", &自然语言知识库类::融合_评价立场 },
+//        { "来源引述",   "A 说 B / 据 A 说 B",   &自然语言知识库类::融合_来源引述 },
+//        { "定义分类",   "A 是 B / A 属于 B",   &自然语言知识库类::融合_定义分类 },
+//        { "角色标注",   "A 给 B C / A 从 B 拿 C", &自然语言知识库类::融合_角色标注 },
+//        { "约束义务",   "必须 / 应该 / 可以", &自然语言知识库类::融合_约束义务 },
+//        { "例外对照",   "除了 A 以外 B",     &自然语言知识库类::融合_例外对照 },
+//        { "单位度量",   "3 米 / 5 公斤",     &自然语言知识库类::融合_单位度量 },
+//        { "指代省略",   "他 / 她 / 它 / 那里 / 这样", &自然语言知识库类::融合_指代省略 },
+//    };
     return 知识库;
 }
+

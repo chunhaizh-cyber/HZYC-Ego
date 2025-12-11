@@ -22,14 +22,7 @@ private:
         L'u',L'v',L'w',L'x',L'y',L'z'
     };
 
-    // 统一“解引用”——支持指针载荷与非指针载荷
-    template<class T>
-    static constexpr auto 解引用(T* p) -> T& {
-        if (!p) throw std::invalid_argument("主信息为空指针");
-        return *p;
-    }
-    template<class T>
-    static constexpr auto 解引用(T& r) -> T& { return r; }
+
 
 public:
     class 节点类 {
@@ -83,7 +76,12 @@ public:
         根指针->上 = 根指针->下 = 根指针->链上 = 根指针->链下 = 根指针->根 = 根指针;
         根指针->主键 = "0";
     }
+    // 在 链表模板 类里加这两行（只允许移动，不允许拷贝）
+    链表模板(链表模板&&) noexcept = default;
+    链表模板& operator=(链表模板&&) noexcept = default;
 
+    链表模板(const 链表模板&) = delete;              // 仍然禁止拷贝
+    链表模板& operator=(const 链表模板&) = delete;    // 仍然禁止拷贝
     ~链表模板() {
         删除链表();
     }

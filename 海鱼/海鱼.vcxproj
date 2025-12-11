@@ -76,9 +76,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>D:\库文件\curl817\include;D:\库文件\jsoncpp\include;D:\库文件\openssl\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>D:\库文件\curl817\lib;D:\库文件\jsoncpp\lib;D:\库文件\openssl\lib;$(LibraryPath)</LibraryPath>
-    <LibraryWPath>C:\Program Files\Git\bin;$(LibraryWPath)</LibraryWPath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryWPath>$(LibraryWPath)</LibraryWPath>
+    <LibraryPath>C:\Program Files %28x86%29\Intel RealSense SDK 2.0\lib\x64;C:\Program Files %28x86%29\Intel RealSense SDK 2.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -97,12 +97,13 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <AdditionalIncludeDirectories>D:\vcpkg\installed\x64-windows\include\opencv4;C:\Program Files %28x86%29\Intel RealSense SDK 2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>realsense2.lib</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Midl>
@@ -213,6 +214,8 @@
     <ClInclude Include="窗口_交互界面.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="三维场景管理类.ixx" />
+    <ClCompile Include="D455相机类.ixx" />
     <ClCompile Include="DlgProxy.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -227,7 +230,6 @@
     <ClCompile Include="二次特征类.impl.cpp" />
     <ClCompile Include="二次特征类.ixx" />
     <ClCompile Include="任务类.ixx" />
-    <ClCompile Include="全局变量模块.ixx" />
     <ClCompile Include="全局函数模块.ixx" />
     <ClCompile Include="内部方法_比较类.ixx" />
     <ClCompile Include="内部方法总接口.ixx" />
@@ -237,10 +239,14 @@
     <ClCompile Include="双向链表模板.ixx" />
     <ClCompile Include="句子类.ixx" />
     <ClCompile Include="因果信息类.ixx" />
+    <ClCompile Include="场景实时显示类.ixx" />
     <ClCompile Include="基础数据类型.ixx" />
+    <ClCompile Include="外设类.impl.cpp" />
+    <ClCompile Include="外设类.ixx" />
     <ClCompile Include="外部方法总接口.impl.cpp" />
     <ClCompile Include="外部方法总接口.ixx" />
-    <ClCompile Include="宇宙树类.ixx" />
+    <ClCompile Include="存在提取类.ixx" />
+    <ClCompile Include="宇宙链类.ixx" />
     <ClCompile Include="宇宙环境类.impl.cpp" />
     <ClCompile Include="宇宙环境类.ixx" />
     <ClCompile Include="方法模块.impl.cpp" />
@@ -258,11 +264,13 @@
     <ClCompile Include="概念树类.ixx" />
     <ClCompile Include="海鱼.cpp" />
     <ClCompile Include="海鱼Dlg.cpp" />
+    <ClCompile Include="点簇分割类.ixx" />
     <ClCompile Include="特征值类.impl.cpp" />
     <ClCompile Include="特征值类.ixx" />
     <ClCompile Include="特征值类_轮廓模块.ixx" />
     <ClCompile Include="状态类.ixx" />
     <ClCompile Include="百度分词类.cpp" />
+    <ClCompile Include="相机接口类.ixx" />
     <ClCompile Include="窗口_交互界面.cpp" />
     <ClCompile Include="线程类.ixx" />
     <ClCompile Include="自我线程模块.impl.cpp" />

@@ -254,15 +254,15 @@ export struct 消息参数 {
     std::variant<int64_t, std::string, std::vector<std::string>, void*> 数据;
 
     消息参数(int64_t 值) : 数据(值) {}
-    消息参数(std::string 值) : 数据(std::move(值)) {}
-    消息参数(std::vector<std::string> 值) : 数据(std::move(值)) {}
+    消息参数(std::string 值) : 数据(值) {}
+    消息参数(std::vector<std::string> 值) : 数据(值) {}
     消息参数(void* 值) : 数据(值) {}
 
     template <typename T>
     消息参数(T) = delete;
 
     bool 是整数()  const { return std::holds_alternative<int64_t>(数据); }
-    int64_t 取整数()  { return std::get<int64_t>(数据); }
+//    int64_t 取整数()  { return std::get<int64_t>(数据); }
 };
 // 消息结构体
 //export struct 消息 {
@@ -318,12 +318,16 @@ export enum class 枚举_动作执行方式 : std::uint8_t {
     子方法       // 调用另一个方法树
 };
 ////////////////////////////////////////////////////////////////////////////////////
-
+// ==================== 纯类型别名（不涉及链表） ====================
+export using 时间戳 = std::uint64_t;
+export using 置信度 = double;
+export using 需求强度 = double;
+export using 特征值 = double;
 export struct 结构体_时间戳 {
     std::uint64_t 值 = 0;
 
     // 显式类型转换解决收缩转换问题
-    static 结构体_时间戳 当前() {
+    static 时间戳 当前() {
         return {
             static_cast<std::uint64_t>( // 明确转换意图
                 std::chrono::steady_clock::now()
@@ -334,11 +338,7 @@ export struct 结构体_时间戳 {
     }
 };
 
-// ==================== 纯类型别名（不涉及链表） ====================
-export using 时间戳 = std::uint64_t;
-export using 置信度 = double;
-export using 需求强度 = double;
-export using 特征值 = double;
+
 
 
 export enum class 枚举_特征值类型 : std::int32_t
@@ -543,3 +543,253 @@ export enum class 枚举_二次特征种类 : std::int16_t {
     因果强度比较,
     // ... 后面你可以继续加
 };
+
+
+// 为了以后扩展清晰，加一个比较模式标记
+export enum class 枚举_特征值比较模式 {
+    有序标量 = 0,      // 支持 <、>、范围、差值
+    相等或相似度       // 只支持 == / != 或相似度，不支持大小关系
+};
+// 简单的颜色结构体，替代OpenCV的viz::Color
+// ===== 基础类型 =====
+export struct Color {
+    uint8_t r = 255, g = 255, b = 255;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// 相机模块参数
+// 在 Vector3D 结构体定义后添加（同一模块内）
+
+export struct Vector3D {
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+
+    // 可选：构造函数
+    Vector3D() = default;
+    constexpr Vector3D(float xx, float yy, float zz) : x(xx), y(yy), z(zz) {}
+
+    // ===== 关键：标量乘法（成员函数）=====
+    constexpr Vector3D operator*(float scalar) const {
+        return Vector3D(x * scalar, y * scalar, z * scalar);
+    }
+
+    // ===== 推荐同时添加：标量除法 =====
+    constexpr Vector3D operator/(float scalar) const {
+        if (scalar == 0.0f) return *this; // 防除零，或抛异常
+        return Vector3D(x / scalar, y / scalar, z / scalar);
+    }
+
+    // ===== 推荐添加：向量加法/减法 =====
+    constexpr Vector3D operator+(const Vector3D& other) const {
+        return Vector3D(x + other.x, y + other.y, z + other.z);
+    }
+
+    constexpr Vector3D operator-(const Vector3D& other) const {
+        return Vector3D(x - other.x, y - other.y, z - other.z);
+    }
+
+    // ===== 推荐添加：复合赋值运算符 =====
+    Vector3D& operator*=(float scalar) {
+        x *= scalar; y *= scalar; z *= scalar;
+        return *this;
+    }
+
+    Vector3D& operator/=(float scalar) {
+        if (scalar != 0.0f) {
+            x /= scalar; y /= scalar; z /= scalar;
+        }
+        return *this;
+    }
+
+    Vector3D& operator+=(const Vector3D& other) {
+        x += other.x; y += other.y; z += other.z;
+        return *this;
+    }
+
+    Vector3D& operator-=(const Vector3D& other) {
+        x -= other.x; y -= other.y; z -= other.z;
+        return *this;
+    }
+};
+
+// ===== 额外：非成员函数版本，支持 float * Vector3D（如 0.5 * vec）=====
+export constexpr Vector3D operator*(float scalar, const Vector3D& vec) {
+    return vec * scalar;
+}
+
+export constexpr Vector3D operator/(float scalar, const Vector3D& vec) {
+    return Vector3D(scalar / vec.x, scalar / vec.y, scalar / vec.z); // 注意：语义不同，通常不常用
+}
+
+
+
+// ===== 原始场景帧 =====
+export struct 结构体_原始场景帧 {
+    std::uint64_t 时间;
+    int 宽度 = 0;
+    int 高度 = 0;
+
+    std::vector<float> 深度;       // 深度图 Z (米)
+    std::vector<Color> 颜色;       // RGB 图
+    std::vector<Vector3D> 点云;    // 相机坐标系下生成的点云（可选）
+	std::vector < std::int64_t>  轮廓;   // 点云轮廓编码（可选）
+};
+
+struct 结构体_存在观测 {
+    结构体_时间戳 时间;
+
+    // 几何信息（相机坐标系）
+    Vector3D 中心坐标;          // 所有点平均 / 质心
+    Vector3D 尺寸;              // (宽, 高, 深) 或三个主方向长度
+    double   距离 = 0.0;        // ||中心||
+    // 轮廓可以同时存 2D 和 3D
+    std::vector<Vector3D> 轮廓3D;
+    // 可选：主方向（PCA）
+    Vector3D 主方向1;
+    Vector3D 主方向2;
+    Vector3D 主方向3;
+
+    // 颜色特征（平均颜色 / 直方图）
+    Color 平均颜色;
+    // 或者 std::array<int, 64> 颜色直方图;
+
+    // 与“数字生命”的抽象挂钩
+    // 存在类型 / 标签先留空，后面由识别模块填写
+    int  存在类型候选ID = -1;
+};
+
+// ===== 点索引 / 点簇 =====
+export struct 点索引 {
+    int u = 0;
+    int v = 0;
+};
+export using 点簇 = std::vector<点索引>;
+
+// ===== 参数 =====
+export struct 点簇分割参数 {
+    // 只考虑这个距离范围内的点（米）
+    float 最小深度 = 0.15f;
+    float 最大深度 = 8.0f;
+
+    // 邻域连接阈值（米）
+    float 邻域最大三维距离 = 0.04f;
+
+    // 当点云不可用时，用深度差做退化连接判断（米）
+    float 邻域最大深度差 = 0.06f;
+
+    // 4 邻域 or 8 邻域
+    bool 使用8邻域 = true;
+
+    // 性能优化：>1 时跳点扫描
+    int 采样步长 = 1;
+
+    // 过滤噪声：点数太少的簇丢弃
+    int 最小点数 = 80;
+
+    // 点云 z==0 的点是否直接忽略
+    bool 忽略无效点 = true;
+
+    // ===== 新增：裁剪输出控制 =====
+    bool 输出裁剪图 = true;               // 输出 bbox 内原图
+    bool 输出裁剪掩码 = true;             // 输出 bbox 内二值掩码
+    int  裁剪边距 = 2;                    // bbox 外扩像素
+    bool 掩码膨胀一次 = true;             // 修补稀疏点导致的断裂
+    bool 掩码填洞 = true;                 // 封闭轮廓填洞
+    int  最大裁剪像素 = 256 * 256;        // 裁剪面积过大则跳过（防内存爆）
+};
+
+// ===== 输出结构 =====
+export struct 点簇边界框 {
+    int umin = 0, umax = 0;
+    int vmin = 0, vmax = 0;
+};
+
+export struct 点簇结果 {
+    点簇        簇;
+    点簇边界框  边界;
+};
+
+// ===== 增强版输出（推荐使用）=====
+export struct 点簇增强结果 {
+    点簇                     簇;
+    点簇边界框               边界;
+    Vector3D                  中心 = { 0.0f, 0.0f, 0.0f };   // 3D 中心（米）
+    Vector3D                  尺寸 = { 0.0f, 0.0f, 0.0f };   // 3D 包围盒尺寸（米）
+    std::vector<std::int64_t> 轮廓编码;                     // 8×8 = 64 维二值图（封闭内部已填充）
+    std::vector<Vector3D>     轮廓3D;                       // 可选：调试用（不强制填）
+
+    // ===== 新增：按轮廓/掩码裁剪原图输出（bbox 内）=====
+    int 裁剪宽 = 0;
+    int 裁剪高 = 0;
+    std::vector<Color>        裁剪颜色;    // size = 裁剪宽 * 裁剪高
+    std::vector<std::uint8_t> 裁剪掩码;    // size = 裁剪宽 * 裁剪高, 0/1
+};
+
+// ==============================
+// 存在观测（与三维场景管理模块同步）
+// ==============================
+export struct 存在观测 {
+    时间戳 时间;
+
+    Vector3D 中心;
+    Vector3D 尺寸;
+
+    Color 平均颜色;  // 仅 r,g,b 三通道
+
+    // 可选：PCA 主轴（单位向量）
+    Vector3D 主方向1{ 1.0f, 0.0f, 0.0f };
+    Vector3D 主方向2{ 0.0f, 1.0f, 0.0f };
+    Vector3D 主方向3{ 0.0f, 0.0f, 1.0f };
+
+    std::vector<Vector3D> 轮廓3D;              // 可选：原始边界 3D 点（调试用）
+    std::vector<std::int64_t> 轮廓编码;        // 核心：8×8=64 维封闭内部二值图
+};
+
+// ==============================
+// 参数
+// ==============================
+export struct 观测提取参数 {
+    // ===== 基础门槛 =====
+    int 最小有效点数 = 80;
+
+    // 尺寸计算（暂不使用 PCA）
+    bool 使用PCA主轴尺寸 = false;
+
+    // 轮廓采样（旧流程用，现可忽略）
+    int 最大轮廓点数 = 128;
+    bool 轮廓使用8邻域 = true;
+
+    // 点云无效点（z<=0）处理
+    bool 忽略无效点 = true;
+
+    // =========================================================
+    // ✅ 补全：输出结果校验与“必须项”控制（你上条需求需要这些）
+    // =========================================================
+
+    // 颜色是否为必须项：true 时算不出平均颜色 => 该观测整体无效
+    bool 要求颜色 = true;
+
+    // 轮廓编码是否为必须项：true 时轮廓编码为空 => 该观测整体无效
+    bool 要求轮廓编码 = true;
+
+    // 轮廓编码维度是否必须为 64（8×8）
+    bool 严格轮廓维度64 = true;
+
+    // 平均颜色的采样步长：1=全采样；2/3=加速
+    int 颜色采样步长 = 2;
+
+    // 观测中心必须在相机前方：中心.z < 最小中心Z => 无效
+    float 最小中心Z = 0.05f;
+
+    // 尺寸下限（防止 0 或极小噪声簇）：任一轴 < 最小尺寸 => 无效
+    float 最小尺寸 = 0.01f;
+};
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+//相机模块参数         截至                                            //////////
+/////////////////////////////////////////////////////////////////////////////////

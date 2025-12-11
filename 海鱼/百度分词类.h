@@ -23,7 +23,7 @@ class BaiduLexerClient {
 public:
     // ak/sk 从百度智能云控制台获取；app_id不需要用到，但保留以便你后续扩展
     BaiduLexerClient(std::string app_id, std::string ak, std::string sk)
-        : app_id_(std::move(app_id)), ak_(std::move(ak)), sk_(std::move(sk)) {
+        : app_id_((app_id)), ak_((ak)), sk_((sk)) {
     }
     BaiduLexerClient() {}
 
@@ -221,7 +221,7 @@ private:
                 t.begin = begin;
                 t.end = end;
 
-                out.push_back(std::move(t));
+                out.push_back((t));
             }
         }
         return out;

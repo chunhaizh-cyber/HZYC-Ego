@@ -12,7 +12,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+import 宇宙环境模块;
+import 外设模块;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -121,7 +122,7 @@ BOOL C海鱼Dlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-	
+	g_宇宙.初始化();
 	// TODO: 在此添加额外的初始化代码
 	主窗口指针 = this;
 	自我线程.启动();
@@ -156,7 +157,7 @@ BOOL C海鱼Dlg::OnInitDialog()
 	//////////////////////////////////////////////////
 	变量_交互界面.ShowWindow(SW_SHOW);
 	////////////////////////////////////////////
-
+	启动外设();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -493,4 +494,11 @@ void C海鱼Dlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.x = 800; // 最小宽度
 	lpMMI->ptMinTrackSize.y = 600; // 最小高度
 	CDialogEx::OnGetMinMaxInfo(lpMMI);
+}
+
+void C海鱼Dlg::启动外设()
+{
+	外设类 外设;
+	外设.相机开始获取信息();
+
 }

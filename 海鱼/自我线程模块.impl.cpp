@@ -15,9 +15,6 @@ import <deque>;
 import <map>;
 import <algorithm>;
 
-import 全局变量模块;
-
-
 void 自我线程类::自我初始化() {
     语素类初始化();
     特征值类初始化();
@@ -93,7 +90,7 @@ void 自我线程类::特征值类初始化()
     词性节点类* 词游标;
     存在节点类* 存在游标;
 
-    矢量单位词指针 = 全局变量::语素集.添加词性词("点", "抽象名词");
+    矢量单位词指针 = 语素集.添加词性词("点", "抽象名词");
 
 
    //
@@ -229,7 +226,7 @@ void 自我线程类::停止() {
 void 自我线程类::推送消息(struct 任务消息 msg) {
     {
         std::lock_guard<std::mutex> lk(mtx_);
-        队列_.push_back(std::move(msg));
+        队列_.push_back((msg));
     }
     cv_.notify_one();
 }
@@ -246,7 +243,7 @@ void 自我线程类::主循环() {
         }
         // 批量处理当前消息
         while (!队列_.empty()) {
-            任务消息 m = std::move(队列_.front());
+            任务消息 m = (队列_.front());
             队列_.pop_front();
             lk.unlock();
 
@@ -293,7 +290,7 @@ void 自我线程类::处理消息_任务(const 任务消息& m) {
         t.id = m.任务ID;
         t.名称 = m.任务ID;
         t.基础重要度 = std::max(0.0, m.数值);
-        任务表_[t.id] = std::move(t);
+        任务表_[t.id] = (t);
         重算所有任务优先级();
         return;
     }
