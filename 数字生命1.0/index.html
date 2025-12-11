@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人工智能之数字生命-从零开始</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/daisyui/4.12.10/full.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- 来源：https://blog.csdn.net/qq_45118549/article/details/155409293 -->
+    
+    <!-- Hero Section -->
+    <div class="hero min-h-[60vh] bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div class="hero-content text-center">
+            <div class="max-w-4xl">
+                <h1 class="text-5xl font-bold mb-6">
+                    <i class="fas fa-brain mr-4"></i>人工智能之数字生命
+                </h1>
+                <p class="text-xl mb-8 opacity-90">从零开始构建基于深度相机的认知系统</p>
+                <div class="badge badge-lg badge-outline">C++ 实现</div>
+                <div class="badge badge-lg badge-outline ml-2">世界树框架</div>
+                <div class="badge badge-lg badge-outline ml-2">计算机视觉</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 核心概念 -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">核心概念</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                数字生命最先做的只有一件事：不停地"看"，把每一帧深度数据变成自己的"场景世界树"，
+                然后用这些场景去更新"安全感"和"好奇心"这两个最原始的需求。
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="card bg-white shadow-xl hover:shadow-2xl transitiong:shadow-2xl transition-all duration-300">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-eye text-4xl text-blue-500"></i>
+                    </div>
+                    <h3 class="card-title text-center">深度感知</h3>
+                    <p class="text-gray-600">
+                        通过深度相机获取3D点云数据，将原始深度信息转换为统一坐标系下的空间点集。
+                    </p>
+                </div>
+            </div>
+
+            <div class="card bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-sitemap text-4xl text-green-500"></i>
+                    </div>
+                    <h3 class="card-title text-center">世界树构建</h3>
+                    <p class="text-gray-600">
+                        将点云分割聚类，生成存在节点，构建层次化的场景世界树认知框架。
+                    </p>
+                </div>
+            </div>
+
+            <div class="card bg-white shadow-xl hover:shadow-2xl transition-all duration-300">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-heart text-4xl text-red-500"></i>
+                    </div>
+                    <h3 class="card-title text-center">情感驱动</h3>
+                    <p class="text-gray-600">
+                        基于环境变化动态更新安全感和好奇心，驱动认知行为的自适应调整。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 技术架构 -->
+    <div class="bg-white py-12">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">技术架构</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6 text-indigo-600">
+                        <i class="fas fa-code mr-3"></i>核心类结构
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="card bg-gray-50">
+                            <div class="card-body p-4">
+                                <h4 class="font-semibold text-gray-800">ExistenceNode (存在节点)</h4>
+                                <p class="text-sm text-gray-600">表示场景中的物体，包含位置、尺寸、形状等几何特征</p>
+                            </div>
+                        </div>
+                        <div class="card bg-gray-50">
+                            <div class="card-body p-4">
+                                <h4 class="font-semibold text-gray-800">SelfNode (自我节点)</h4>
+                                <p class="text-sm text-gray-600">表示数字生命自身，维护安全度、好奇度等状态</p>
+                            </div>
+                        </div>
+                        <div class="card bg-gray-50">
+                            <div class="card-body p-4">
+                                <h4 class="font-semibold text-gray-800">StateNode (状态节点)</h4>
+                                <p class="text-sm text-gray-600">场景快照，包含某一时刻的所有存在和自我状态</p>
+                            </div>
+                        </div>
+                        <div class="card bg-gray-50">
+                            <div class="card-body p-4">
+                                <h4 class="font-semibold text-gray-800">SceneNode (场景节点)</h4>
+                                <p class="text-sm text-gray-600">场景容器，管理多个状态节点的时间序列</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6 text-purple-600">
+                        <i class="fas fa-cogs mr-3"></i>处理流程
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h4 class="font-semibold">深度图获取</h4>
+                                <p class="text-sm text-gray-600">模拟深度相机生成3D点云数据</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h4 class="font-semibold">点云分割</h4>
+                                <p class="text-sm text-gray-600">基于距离的连通性聚类算法</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                            <div>
+                                <h4 class="font-semibold">存在生成</h4>
+                                <p class="text-sm text-gray-600">为每个聚类创建存在节点并提取特征</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                            <div>
+                                <h4 class="font-semibold">状态构建</h4>
+                                <p class="text-sm text-gray-600">整合存在节点生成场景快照</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold">5</div>
+                            <div>
+                                <h4 class="font-semibold">情感更新</h4>
+                                <p class="text-sm text-gray-600">基于环境变化更新安全感和好奇心</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 运行效果展示 -->
+    <div class="container mx-auto px-6 py-12">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">运行效果</h2>
+        
+        <div class="card bg-white shadow-xl">
+            <div class="card-body">
+                <h3 class="card-title text-2xl mb-6">
+                    <i class="fas fa-play-circle text-green-500 mr-3"></i>系统运行示例
+                </h3>
+                
+                <div class="mockup-code bg-gray-900 text-green-400 p-6 rounded-lg mb-4">
+                    <pre data-prefix="$"><code>./digital_life</code></pre>
+                    <pre class="text-gray-300"><code>=== 数字生命系统启动 ===
+
+=== 执行观察任务 ===
+获取点云数据: 62 个点
+分割得到 2 个存在簇
+存在 0: 位置(1.67,-1.82,2.60) 距离: 3.59
+存在 1: 位置(2.44,1.63,5.64) 距离: 6.36
+安全度: 0.50, 好奇度: 0.48
+
+=== 执行观察任务 ===
+获取点云数据: 136 个点
+分割得到 4 个存在簇
+存在 0: 位置(0.05,2.83,1.86) 距离: 3.39
+存在 1: 位置(3.49,1.31,1.34) 距离: 3.96
+存在 2: 位置(1.10,3.40,4.62) 距离: 5.84
+存在 3: 位置(2.32,-1.36,2.36) 距离: 3.57
+安全度: 0.50, 好奇度: 0.46
+
+=== 数字生命系统运行完成 ===
+场景状态数: 5</code></pre>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="stat bg-blue-50 rounded-lg p-4">
+                        <div class="stat-figure text-blue-600">
+                            <i class="fas fa-cube text-3xl"></i>
+                        </div>
+                        <div class="stat-title">平均存在数量</div>
+                        <div class="stat-value text-blue-600">3.2</div>
+                        <div class="stat-desc">每帧检测到的物体数量</div>
+                    </div>
+                    
+                    <div class="stat bg-green-50 rounded-lg p-4">
+                        <div class="stat-figure text-green-600">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <div class="stat-title">安全度变化</div>
+                        <div class="stat-value text-green-600">动态</div>
+                        <div class="stat-desc">基于距离和威胁评估</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 核心算法详解 -->
+    <div class="bg-gray-50 py-12">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">核心算法详解</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="card bg-white shadow-lg">
+                    <div class="card-body">
+                        <h3 class="card-title text-indigo-600">
+                            <i class="fas fa-search mr-2"></i>点云分割算法
+                        </h3>
+                        <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                            <div class="text-gray-700">
+                                // 基于距离的连通性聚类<br>
+                                for each unprocessed point:<br>
+                                  create new cluster<br>
+                                  find all connected points (distance < threshold)<br>
+                                  add to cluster if size > min_size<br>
+                                return clusters
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mt-4">
+                            使用距离阈值1.0进行连通性分析，最小聚类大小为5个点，
+                            有效分离场景中的不同物体。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card bg-white shadow-lg">
+                    <div class="card-body">
+                        <h3 class="card-title text-purple-600">
+                            <i class="fas fa-shield-alt mr-2"></i>安全度评估
+                        </h3>
+                        <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                            <div class="text-gray-700">
+                                // 多因素安全评估<br>
+                                min_distance = find_nearest_object()<br>
+                                if min_distance < 2.0: safety -= 0.2<br>
+                                if approaching_objects > 0: safety -= 0.1 * count<br>
+                                if stable_environment: safety += 0.05
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mt-4">
+                            综合考虑最近物体距离、靠近物体数量和场景稳定性，
+                            实现本能的安全感评估机制。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card bg-white shadow-lg">
+                    <div class="card-body">
+                        <h3 class="card-title text-green-600">
+                            <i class="fas fa-link mr-2"></i>跨帧匹配
+                        </h3>
+                        <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                            <div class="text-gray-700">
+                                // 基于特征相似度匹配<br>
+                                for each current_existence:<br>
+                                  best_score = calculate_similarity(position, size)<br>
+                                  if best_score > threshold:<br>
+                                    update_trajectory()<br>
+                                    link_existences()
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mt-4">
+                            通过位置和尺寸特征计算相似度，阈值0.7，
+                            实现连续时间序列中同一物体的轨迹跟踪。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card bg-white shadow-lg">
+                    <div class="card-body">
+                        <h3 class="card-title text-orange-600">
+                            <i class="fas fa-lightbulb mr-2"></i>好奇度评估
+                        </h3>
+                        <div class="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                            <div class="text-gray-700">
+                                // 探索驱动评估<br>
+                                unknown_count = count_distant_objects()<br>
+                                high_change = count_fast_moving_objects()<br>
+                                curiosity += 0.05 * unknown_count<br>
+                                curiosity += 0.03 * high_change<br>
+                                if stable: curiosity -= 0.02
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mt-4">
+                            基于未知区域和变化频率驱动好奇心，
+                            鼓励系统探索新环境和适应变化。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 技术实现 -->
+    <div class="container mx-auto px-6 py-12">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">技术实现</h2>
+        
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="card bg-white shadow-xl">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fab fa-cuttlefish text-5xl text-blue-600"></i>
+                    </div>
+                    <h3 class="card-title text-center">C++ 实现</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>面向对象设计</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>智能指针内存管理</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>STL容器和算法</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>模块化架构</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card bg-white shadow-xl">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-cube text-5xl text-green-600"></i>
+                    </div>
+                    <h3 class="card-title text-center">3D 数据处理</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>点云数据结构</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>3D几何计算</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>距离和角度测量</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>包围盒计算</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card bg-white shadow-xl">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-brain text-5xl text-purple-600"></i>
+                    </div>
+                    <h3 class="card-title text-center">认知算法</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>聚类分割算法</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>特征提取和匹配</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>情感状态评估</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>任务调度系统</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 运行方式 -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 py-12 text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8">运行方式</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="mockup-code bg-gray-900 text-green-400 p-6 rounded-lg text-left">
+                    <pre data-prefix="$"><code>g++ -std=c++11 -o digital_life main.cpp</code></pre>
+                    <pre data-prefix="$"><code>./digital_life</code></pre>
+                </div>
+                
+                <div class="mt-8 grid md:grid-cols-2 gap-8">
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">
+                            <i class="fas fa-cog mr-2"></i>编译要求
+                        </h3>
+                        <ul class="space-y-2">
+                            <li>• C++11 或更高版本</li>
+                            <li>• 标准库支持</li>
+                            <li>• 无外部依赖</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">
+                            <i class="fas fa-play mr-2"></i>运行参数
+                        </h3>
+                        <ul class="space-y-2">
+                            <li>• 默认运行5次迭代</li>
+                            <li>• 可修改mainLoop参数</li>
+                            <li>• 实时显示认知过程</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-4">
+                <i class="fas fa-code mr-2"></i>基于 CSDN 博客文章实现
+            </p>
+            <p class="text-gray-400">
+                来源：<a href="https://blog.csdn.net/qq_45118549/article/details/155409293" 
+                     class="text-blue-400 hover:text-blue-300 underline" target="_blank">
+                    人工智能之数字生命-从零开始
+                </a>
+            </p>
+            <div class="mt-4">
+                <p class="text-sm text-gray-500">
+                    实现时间：2025年12月 | 技术栈：C++ | 项目类型：人工智能认知系统
+                </p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

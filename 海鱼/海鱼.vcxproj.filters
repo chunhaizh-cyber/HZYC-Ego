@@ -200,6 +200,36 @@
     <ClCompile Include="宇宙树类.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="宇宙环境类.ixx">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_二次特征树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_存在树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_特征树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_状态树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_动态树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念_因果树类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="宇宙环境类.impl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念引擎类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="概念引擎类.impl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="My.idl">

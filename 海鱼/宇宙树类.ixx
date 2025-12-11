@@ -1,9 +1,13 @@
-﻿export module 宇宙树容器模块;
-import 主信息定义模块;
-import 基础数据类型模块;
+﻿// 宇宙链模块.ixx
+export module 宇宙链模块;
+
 import 模板模块;
+import 主信息定义模块;
 
-export class  宇宙树链表 :public 链表模板<基础信息节点类*> {
+// 宇宙链 = 链表模板<基础信息基类*>
+// 这是一条全局唯一的“仓库链”，
+// 世界树、概念树的所有节点都存在这里。
+export using 宇宙链类型 = 链表模板<基础信息基类*>;
 
-
-};
+// 全局唯一的宇宙链
+export inline 宇宙链类型 宇宙链{};

@@ -12,9 +12,9 @@ import 概念树模块;
 
 namespace 全局变量 {
 	export 链表模板<基础信息基类*> 宇宙链表;
-	export 语素类 语素集;
-	export 世界树类 世界树;
 	export 特征值类 特征值集;
+	export 自然语言知识库类 语言知识库;
+	export 语素类 语素集;
 	export 自然语言树类 语言树;
 	export 概念树类 概念树;
 	 
