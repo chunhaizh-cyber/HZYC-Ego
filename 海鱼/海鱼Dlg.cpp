@@ -9,11 +9,9 @@
 #include "DlgProxy.h"
 #include "afxdialogex.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+
 import 宇宙环境模块;
-import 外设模块;
+import 场景实时显示线程模块;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -158,7 +156,10 @@ BOOL C海鱼Dlg::OnInitDialog()
 	变量_交互界面.ShowWindow(SW_SHOW);
 	////////////////////////////////////////////
 	启动外设();
-
+	if (!场景显示线程) {
+		场景显示线程 = std::make_unique<场景显示线程类>();
+		场景显示线程->启动();
+	}
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -219,18 +220,30 @@ HCURSOR C海鱼Dlg::OnQueryDragIcon()
 
 void C海鱼Dlg::OnClose()
 {
+	if (CanExit()) {
+		停止场景显示();
+		CDialogEx::OnClose();
+	}
 	if (CanExit())
 		CDialogEx::OnClose();
 }
 
 void C海鱼Dlg::OnOK()
 {
+	if (CanExit()) {
+		停止场景显示();
+		CDialogEx::OnClose();
+	}
 	if (CanExit())
 		CDialogEx::OnOK();
 }
 
 void C海鱼Dlg::OnCancel()
 {
+	if (CanExit()) {
+		停止场景显示();
+		CDialogEx::OnClose();
+	}
 	if (CanExit())
 		CDialogEx::OnCancel();
 }
@@ -499,6 +512,45 @@ void C海鱼Dlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 void C海鱼Dlg::启动外设()
 {
 	外设类 外设;
-	外设.相机开始获取信息();
+	外设.相机开始获取信息_阻塞([this](auto f, auto o) {
+		this->提交场景显示(std::move(f), std::move(o));
+		});
 
+	 
+
+}
+
+void C海鱼Dlg::启动场景实时显示()
+{
+	
+	//场景显示线程.启动();
+}
+
+void C海鱼Dlg::停止场景实时显示()
+{
+	
+	//场景显示线程.停止();
+
+}
+
+void C海鱼Dlg::提交场景快照(
+	std::shared_ptr<结构体_原始场景帧> 帧,
+	std::shared_ptr<std::vector<存在观测>> 观测列表)
+{
+//	场景显示线程..(std::move(帧), std::move(观测列表));
+}
+void C海鱼Dlg::提交场景显示(std::shared_ptr<结构体_原始场景帧> 帧,
+	std::shared_ptr<std::vector<存在观测>> 观测)
+{
+	if (场景显示线程) {
+		场景显示线程->提交(std::move(帧), std::move(观测));
+	}
+}
+
+void C海鱼Dlg::停止场景显示()
+{
+	if (场景显示线程) {
+		场景显示线程->停止();
+		场景显示线程.reset();
+	}
 }
