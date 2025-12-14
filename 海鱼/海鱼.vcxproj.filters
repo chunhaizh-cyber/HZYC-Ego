@@ -251,6 +251,12 @@
     <ClCompile Include="场景实时显示类.ixx">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="线程模板类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="场景实时显示线程类.ixx">
+      <Filter>头文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="My.idl">
